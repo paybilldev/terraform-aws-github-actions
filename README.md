@@ -39,6 +39,32 @@ Access is limited to:
 
 Only workflows that match these conditions can assume the IAM role.
 
+### **Setup Github account access**
+[Generate Github Token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) and store them in ssm parameter as `SecureString`. (using parameter name - /{namespace}/{environment}/github_user & /{namespace}/{environment}/github_token)
+
+Create a [codepipeline connection for github](https://docs.aws.amazon.com/codepipeline/latest/userguide/connections-github.html) with your github account and repository named `github-connection-paybill` or run this terraform.
+
+* Create `terraform.tfvars` 
+
+```hcl
+github_user    = "change-me"
+github_repo    = "change-me"
+github_token   = "change-me"
+```
+
+* Then run the following command to deploy it 
+
+    ```
+    terraform init
+    terraform plan 
+    terraform apply
+    ```
+* Unfortunately, Terraform **cannot create the actual GitHub connection** (because you need to authorize GitHub OAuth via the AWS Console).
+You must first create it in the console:
+    * Go to **AWS Console → Developer Tools → Connections**
+    * Click **Create connection** → Select **GitHub** → **Install App / Authorize**.
+
+---
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -78,13 +104,13 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_create_oidc_provider"></a> [create\_oidc\_provider](#input\_create\_oidc\_provider) | n/a | `bool` | `true` | no |
-| <a name="input_environment"></a> [environment](#input\_environment) | Name of the environment, i.e. dev, stage, prod | `string` | n/a | yes |
+| <a name="input_environment"></a> [environment](#input\_environment) | Name of the environment, i.e. dev, stage, prod | `string` | `"dev"` | no |
 | <a name="input_github_branch"></a> [github\_branch](#input\_github\_branch) | GitHub branch name (e.g., main) | `string` | `"main"` | no |
 | <a name="input_github_repo"></a> [github\_repo](#input\_github\_repo) | GitHub repository name | `string` | n/a | yes |
 | <a name="input_github_token"></a> [github\_token](#input\_github\_token) | GitHub user/organization that has been generated | `string` | n/a | yes |
 | <a name="input_github_user"></a> [github\_user](#input\_github\_user) | GitHub user/organization that will access AWS via OIDC | `string` | n/a | yes |
 | <a name="input_iam_role_name"></a> [iam\_role\_name](#input\_iam\_role\_name) | Name of the IAM role for GitHub Actions | `string` | `"github-actions-role"` | no |
-| <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace of the project | `string` | n/a | yes |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | Namespace of the project | `string` | `"platform-api"` | no |
 | <a name="input_policy_name"></a> [policy\_name](#input\_policy\_name) | Name of the IAM policy for GitHub Actions | `string` | `"github-actions-policy"` | no |
 | <a name="input_s3_buckets"></a> [s3\_buckets](#input\_s3\_buckets) | List of S3 bucket ARNs the GitHub Actions role can access | `list(string)` | <pre>[<br/>  "*"<br/>]</pre> | no |
 

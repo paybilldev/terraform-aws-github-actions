@@ -40,11 +40,13 @@ variable "s3_buckets" {
 variable "environment" {
   type        = string
   description = "Name of the environment, i.e. dev, stage, prod"
+  default     = "dev"
 }
 
 variable "namespace" {
   type        = string
   description = "Namespace of the project"
+  default     = "platform-api"
 }
 
 variable "create_oidc_provider" {
